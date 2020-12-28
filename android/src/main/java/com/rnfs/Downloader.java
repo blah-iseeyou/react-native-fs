@@ -6,12 +6,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.util.Log;
 
 import android.os.AsyncTask;
+
+import com.rnfs.TLSSocketFactory;
+
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLContext;
+
+import android.os.Build;
 
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
@@ -42,12 +50,21 @@ public class Downloader extends AsyncTask<DownloadParams, long[], DownloadResult
   private void download(DownloadParams param, DownloadResult res) throws Exception {
     InputStream input = null;
     OutputStream output = null;
-    HttpURLConnection connection = null;
+    HttpsURLConnection connection = null;
 
     try {
-      connection = (HttpURLConnection)param.src.openConnection();
+      connection = (HttpsURLConnection)param.src.openConnection();
 
       ReadableMapKeySetIterator iterator = param.headers.keySetIterator();
+
+      if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(null, null, null);
+        SSLSocketFactory noSSLv3Factory = new TLSSocketFactory(context.getSocketFactory());
+        connection.setSSLSocketFactory(noSSLv3Factory);
+//        connection.setSSLSocketFactory(noSSLv3Factory);
+      }
+
 
       while (iterator.hasNextKey()) {
         String key = iterator.nextKey();
@@ -63,10 +80,10 @@ public class Downloader extends AsyncTask<DownloadParams, long[], DownloadResult
       long lengthOfFile = getContentLength(connection);
 
       boolean isRedirect = (
-        statusCode != HttpURLConnection.HTTP_OK &&
+        statusCode != HttpsURLConnection.HTTP_OK &&
         (
-          statusCode == HttpURLConnection.HTTP_MOVED_PERM ||
-          statusCode == HttpURLConnection.HTTP_MOVED_TEMP ||
+          statusCode == HttpsURLConnection.HTTP_MOVED_PERM ||
+          statusCode == HttpsURLConnection.HTTP_MOVED_TEMP ||
           statusCode == 307 ||
           statusCode == 308
         )
@@ -76,7 +93,7 @@ public class Downloader extends AsyncTask<DownloadParams, long[], DownloadResult
         String redirectURL = connection.getHeaderField("Location");
         connection.disconnect();
 
-        connection = (HttpURLConnection) new URL(redirectURL).openConnection();
+        connection = (HttpsURLConnection) new URL(redirectURL).openConnection();
         connection.setConnectTimeout(5000);
         connection.connect();
 
@@ -151,7 +168,7 @@ public class Downloader extends AsyncTask<DownloadParams, long[], DownloadResult
     }
   }
 
-  private long getContentLength(HttpURLConnection connection){
+  private long getContentLength(HttpsURLConnection connection){
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
       return connection.getContentLengthLong();
     }
