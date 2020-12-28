@@ -18,6 +18,12 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.SSLContext;
 
 import android.os.Build;
+import android.os.Build;
+
+import java.util.Map;
+import java.util.HasMap;
+import java.util.List;
+
 
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
