@@ -23,7 +23,7 @@ import android.os.Build;
 
 
 import java.util.Map;
-import java.util.HasMap;
+import java.util.HashMap;
 import java.util.List;
 
 
