@@ -8,8 +8,7 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import android.util.Log;
-
+// import android.util.Log;
 import android.os.AsyncTask;
 
 import com.rnfs.TLSSocketFactory;
@@ -17,8 +16,6 @@ import com.rnfs.TLSSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.SSLContext;
 
-
-import android.os.Build;
 import android.os.Build;
 
 
@@ -152,7 +149,7 @@ public class Downloader extends AsyncTask<DownloadParams, long[], DownloadResult
               double progress = Math.round(((double) total * 100) / lengthOfFile);
               if (progress % param.progressDivider == 0) {
                 if ((progress != lastProgressValue) || (total == lengthOfFile)) {
-                  Log.d("Downloader", "EMIT: " + String.valueOf(progress) + ", TOTAL:" + String.valueOf(total));
+                  // Log.d("Downloader", "EMIT: " + String.valueOf(progress) + ", TOTAL:" + String.valueOf(total));
                   lastProgressValue = progress;
                   publishProgress(new long[]{lengthOfFile, total});
                 }
