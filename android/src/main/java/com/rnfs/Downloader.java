@@ -5,9 +5,7 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.net.HttpURLConnection;
 import javax.net.ssl.HttpsURLConnection;
-import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.util.Log;
