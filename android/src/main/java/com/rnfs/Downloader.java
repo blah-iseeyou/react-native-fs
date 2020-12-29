@@ -8,7 +8,6 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-// import android.util.Log;
 import android.os.AsyncTask;
 
 import com.rnfs.TLSSocketFactory;
@@ -17,7 +16,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.SSLContext;
 
 import android.os.Build;
-
 
 import java.util.Map;
 import java.util.HashMap;
@@ -54,27 +52,20 @@ public class Downloader extends AsyncTask<DownloadParams, long[], DownloadResult
     InputStream input = null;
     OutputStream output = null;
     HttpsURLConnection connection = null;
-
     try {
       connection = (HttpsURLConnection)param.src.openConnection();
-
       ReadableMapKeySetIterator iterator = param.headers.keySetIterator();
-
       if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
         SSLContext context = SSLContext.getInstance("TLS");
         context.init(null, null, null);
         SSLSocketFactory noSSLv3Factory = new TLSSocketFactory(context.getSocketFactory());
         connection.setSSLSocketFactory(noSSLv3Factory);
-//        connection.setSSLSocketFactory(noSSLv3Factory);
       }
-
-
       while (iterator.hasNextKey()) {
         String key = iterator.nextKey();
         String value = param.headers.getString(key);
         connection.setRequestProperty(key, value);
       }
-
       connection.setConnectTimeout(param.connectionTimeout);
       connection.setReadTimeout(param.readTimeout);
       connection.connect();
